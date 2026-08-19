@@ -1,0 +1,72 @@
+# ==============================================================================
+# Lexora — .dockerignore
+# Exclude dev artifacts, secrets, and files not needed inside the image.
+# backend/ and frontend/ source ARE required and must not be over-ignored.
+# ==============================================================================
+
+# Version control
+.git
+.gitignore
+.dockerignore
+
+# Virtual environments (never copy local venv into the image)
+venv/
+.venv/
+env/
+backend/venv/
+backend/.venv/
+
+# Python bytecode and test/lint caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environment and credentials — MUST NOT be baked into the image
+.env
+.env.*
+backend/.env
+**/*.pem
+**/*.key
+**/*.pub
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Local test scripts and dev-only files (not used at runtime)
+backend/test_api.py
+backend/test_api_extended.py
+
+# Modal deployment script runs separately via `modal deploy`; not needed to run the API.
+# Kept in repo but excluded to avoid confusion — optional; remove this line if you prefer it in-image.
+# backend/core/modals.py
+
+# Local data, logs, and scratch files
+*.pdf
+*.log
+*.sqlite
+*.db
+tmp/
+scratch/
+
+# HuggingFace / model caches from local dev machines (image pre-downloads its own cache)
+**/.hf-cache/
+**/.cache/huggingface/
+**/cache/
+
+# Node (not used — frontend is vanilla HTML/JS with no build step)
+node_modules/
+
+# Assignment / docs not needed at runtime
+SpotDraft_assignment.txt
+README.md

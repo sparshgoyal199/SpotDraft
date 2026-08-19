@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lexora — Sign in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <section class="auth-brand">
+      <div>
+        <div class="eyebrow">PDF intelligence</div>
+        <h1>Read together.<br />Ask the document.</h1>
+        <p class="muted" style="color:#d6cbb8;max-width:420px;">
+          Upload contracts and research PDFs, generate grounded summaries, chat with the file, and invite others to comment — no account required for guests.
+        </p>
+      </div>
+      <div class="eyebrow">Lexora workspace</div>
+    </section>
+    <section class="auth-panel">
+      <div class="card">
+        <h2 id="form-title">Welcome back</h2>
+        <p class="muted" id="form-copy">Sign in to your library.</p>
+        <form id="auth-form">
+          <div id="name-field" class="hidden">
+            <label for="name">Name</label>
+            <input id="name" name="name" autocomplete="name" />
+          </div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required autocomplete="email" />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password" />
+          <p class="error" id="error"></p>
+          <button class="btn btn-primary" type="submit" id="submit-btn">Sign in</button>
+        </form>
+        <p class="switch muted">
+          <span id="switch-copy">Need an account?</span>
+          <a href="#" id="switch-link">Create one</a>
+        </p>
+      </div>
+    </section>
+  </div>
+  <script type="module" src="/js/auth.js"></script>
+</body>
+</html>
