@@ -15,7 +15,7 @@ comment_router = APIRouter(tags=["comments"])
 @comment_router.post("/pdfs/{pdf_id}/comments", response_model=CommentOut)
 async def create_comment(pdf_id: str, payload: CommentCreate, current_user: dict = Depends(get_current_user)):
     pdf_id = make_pdf_id_to_str(pdf_id)
-    await get_owned_pdf_or_403(pdf_id, current_user["id"])   # ensure PDF exists + user owns it
+    await get_owned_pdf_or_403(pdf_id, current_user["id"])
     return await add_comment_authenticated(pdf_id, current_user["id"], payload)
 
 

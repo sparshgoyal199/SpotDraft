@@ -11,14 +11,14 @@ from datetime import datetime
 from typing import Optional, Literal
 
 class PdfListItem(BaseModel):
-    id: UUID
+    id: str
     filename: str
     upload_date: datetime
     summary: Optional[str] = None
 
 
 class PdfDetail(BaseModel):
-    id: UUID
+    id: str
     filename: str
     upload_date: datetime
     summary: Optional[str] = None
@@ -27,7 +27,7 @@ class PdfDetail(BaseModel):
 
 
 class SharedPdfDetail(BaseModel):
-    id: UUID
+    id: str
     filename: str
     upload_date: datetime
     summary: Optional[str] = None

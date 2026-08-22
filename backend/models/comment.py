@@ -5,7 +5,7 @@ from typing import Optional
 
 class CommentCreate(BaseModel):
     content: str
-    guest_name: Optional[str] = None   # sirf tab chahiye jab user guest ho
+    guest_name: Optional[str] = None  
 
     @field_validator("content")
     @classmethod

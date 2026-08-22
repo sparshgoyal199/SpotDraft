@@ -24,7 +24,7 @@ async def generate_share_link(pdf_id: str, user_id: str, base_url: str) -> dict:
     pdf = await get_owned_pdf_or_403(pdf_id, user_id)
 
     if pdf.get("share_token"):
-        token = pdf["share_token"]   # already exist, wahi wapas do (jaisa pehle discuss kiya tha)
+        token = pdf["share_token"]  
     else:
         token = str(uuid.uuid4())
         await core_db.supabase_client.table("pdfs").update({"share_token": token}).eq("id", pdf_id).execute()
@@ -53,7 +53,7 @@ async def _get_file_signed_url(storage_path: str) -> Optional[str]:
 
 
 async def get_pdf_detail_for_owner(pdf_id: str, user_id: str) -> dict:
-    pdf = await get_owned_pdf_or_403(pdf_id, user_id)   # already exists — ownership check
+    pdf = await get_owned_pdf_or_403(pdf_id, user_id)
     pdf["file_url"] = await _get_file_signed_url(pdf.get("storage_path"))
     return pdf
 

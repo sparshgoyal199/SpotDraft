@@ -12,6 +12,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from services.retrieval_service import response_generator, creating_user_prompt
 from pipeline.prompt import summary_system_prompt
 from services.db_service import uploading_file
+from services.pdf_service import make_pdf_id_to_str
 import numpy as np
 from services.vector_service import store_vectors
 from typing import TypedDict
@@ -34,6 +35,7 @@ ingest_graph = StateGraph(IngestionState)
 
 def pdf_id_generation(state: IngestionState):
     pdf_id = uuid.uuid4().hex
+    pdf_id = make_pdf_id_to_str(pdf_id)
     return {"pdf_id": pdf_id}
 
 async def document_parsing(state: IngestionState):
@@ -63,20 +65,24 @@ async def vector_storing(state: IngestionState):
 def get_summarised_chunks(state: IngestionState):
     total_vectors = len(state["embedded_chunks"])
 
+    print("Total vectors: ", total_vectors, "\n")
     if total_vectors == 0:
         return {"summary_chunks": []}
     
     embedded_chunks = np.array(state["embedded_chunks"])
     summary_chunks = k_means_summarised_chunks(total_vectors=total_vectors, embedded_chunks=embedded_chunks, chunks_payload=state["chunks_payload"])
+    print("summary chunks: ",summary_chunks, "\n")
     return {"summary_chunks": summary_chunks}
 
 def generate_summarize_prompt(state: IngestionState):
     summary_prompt = creating_user_prompt(state["summary_chunks"], query="Summarize the above context")
+    print("summary_prompt: ", summary_prompt, "\n")
     return {"summary_prompt": summary_prompt}
 
 async def generating_summary_response(state: IngestionState):
     messages = [SystemMessage(content=summary_system_prompt), HumanMessage(content=state["summary_prompt"])]
     response = await response_generator(messages)
+    print("response: ", response, "\n")
     return {"summary": response.content}
 
 async def file_upload(state: IngestionState):
@@ -99,15 +105,27 @@ ingest_graph.add_node("generate_summarize_prompt", generate_summarize_prompt)
 ingest_graph.add_node("generating_summary_response", generating_summary_response)
 ingest_graph.add_node("file_upload", file_upload)
 
+# ingest_graph.add_edge(START, "pdf_id_generation")
+# ingest_graph.add_edge("pdf_id_generation", "document_parsing")
+# ingest_graph.add_edge("document_parsing", "chunks_creation")
+# ingest_graph.add_edge("chunks_creation", "embeddings_generation")
+# ingest_graph.add_edge("embeddings_generation", "vector_storing")
+# ingest_graph.add_edge("vector_storing", "get_summarised_chunks")
+# ingest_graph.add_edge("get_summarised_chunks", "generate_summarize_prompt")
+# ingest_graph.add_edge("generate_summarize_prompt", "generating_summary_response")
+# ingest_graph.add_edge("generating_summary_response", "file_upload")
+# ingest_graph.add_edge("file_upload", END)
+
 ingest_graph.add_edge(START, "pdf_id_generation")
 ingest_graph.add_edge("pdf_id_generation", "document_parsing")
 ingest_graph.add_edge("document_parsing", "chunks_creation")
 ingest_graph.add_edge("chunks_creation", "embeddings_generation")
 ingest_graph.add_edge("embeddings_generation", "vector_storing")
-ingest_graph.add_edge("vector_storing", "get_summarised_chunks")
+ingest_graph.add_edge("embeddings_generation", "get_summarised_chunks")
 ingest_graph.add_edge("get_summarised_chunks", "generate_summarize_prompt")
 ingest_graph.add_edge("generate_summarize_prompt", "generating_summary_response")
-ingest_graph.add_edge("generating_summary_response", "file_upload")
+ingest_graph.add_edge(["vector_storing", "generating_summary_response"], "file_upload")
 ingest_graph.add_edge("file_upload", END)
+
 
 ingestion_workflow = ingest_graph.compile()

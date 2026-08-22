@@ -25,7 +25,9 @@ async def lifespan(app: FastAPI):
     yield  # Yahan app chalega
 
     # Shutdown: pool band karo
+    import core.db as core_db
     await pool.close()
+    await core_db.supabase_client.postgrest.session.aclose()
 
 app = FastAPI(lifespan=lifespan)
 

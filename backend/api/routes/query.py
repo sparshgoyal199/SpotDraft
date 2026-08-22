@@ -22,7 +22,8 @@ async def query_document(query: QueryRequest, pdf_id: str, current_user: dict = 
         session = await get_or_create_session(pdf_id, current_user["id"]) 
         retrieval_workflow = get_graph() 
         config = {"configurable": {"thread_id": session["langgraph_thread_id"]}}
-        initial_state = {"pdf_id": pdf_id, "query": query.query, "messages": [SystemMessage(content=system_prompt)]}
+        # initial_state = {"pdf_id": pdf_id, "query": query.query, "messages": [SystemMessage(content=system_prompt)]}
+        initial_state = {"pdf_id": pdf_id, "query": query.query}
         await save_message(session["id"], "user", query.query)
         async def ai_only_stream():
             full_response = ""
@@ -78,3 +79,5 @@ async def guest_query_document(query: QueryRequest, share_token: str):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+
+    
